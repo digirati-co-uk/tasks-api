@@ -1,0 +1,53 @@
+name: Tasks API API Docker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/docker.yaml"
+      - "src/**"
+      - "Dockerfile"
+      - "package.json"
+      - "yarn.lock"
+      - "ecosystem.config.js"
+      - "tsconfig.json"
+
+jobs:
+
+  tasks-api-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push SHA to GitHub Packages
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          push: true
+          tags: |
+            ghcr.io/digirati-co-uk/tasks-api:${{ github.sha }}
+            ghcr.io/digirati-co-uk/tasks-api:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
