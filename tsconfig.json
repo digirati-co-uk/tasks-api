@@ -2,7 +2,6 @@
   "compilerOptions": {
     "baseUrl": "src",
     "lib": ["dom", "es2020"],
-    "typeRoots": ["../../node_modules/@types"],
     "target": "es2018",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

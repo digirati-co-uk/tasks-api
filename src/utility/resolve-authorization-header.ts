@@ -1,11 +1,11 @@
 import { Context } from 'koa';
 
 export function resolveAuthorizationHeader(ctx: Context, { passthrough = false }: { passthrough?: boolean } = {}) {
-  if (!ctx.header || !ctx.header.authorization) {
+  if (!ctx.headers || !ctx.headers.Authorization) {
     return;
   }
 
-  const parts = ctx.header.authorization.split(' ');
+  const parts = ctx.headers.Authorization.split(' ');
 
   if (parts.length === 2) {
     const scheme = parts[0];

@@ -5,8 +5,39 @@ import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 import { JobsOptions, Queue } from 'bullmq';
 import { EventPrefix } from './utility/events';
+import { ConnectionOptions } from 'bullmq/src/interfaces/redis-options';
 
 export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
+
+export type AppConfig = {
+  postgres: DBConfig;
+  queue?: BaseQueueConfig;
+  env: string;
+  queueList: string[];
+  redis?: ConnectionOptions;
+  enableQueue?: boolean;
+  jwt?: JWTConfig;
+  migrate: boolean;
+  log?: boolean;
+};
+
+export type BaseQueueConfig = {
+  dispatch: {
+    assigned: string[];
+    created: string[];
+    modified: string[];
+    subtask_created: string[];
+    deleted: string[];
+  };
+};
+
+export type JWTConfig = {
+  siteIdHeader?: string;
+  userIdHeader?: string;
+  userNameHeader?: string;
+  userUrnPrefix?: string;
+  siteUrnPrefix?: string;
+};
 
 export interface ApplicationState {
   // User.
@@ -38,7 +69,7 @@ export interface ApplicationState {
 export interface ApplicationContext {
   routes: typeof router;
   connection: DatabasePoolConnectionType;
-  getQueue: (name: string) => Queue;
+  getQueue?: (name: string) => Queue;
   ajv: Ajv;
 }
 
@@ -49,6 +80,16 @@ export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<
       requestBody: Body;
     }
 >;
+
+export type DBConfig =
+  | string
+  | {
+      username: string;
+      password: string;
+      host: string;
+      port: string | number;
+      database: string;
+    };
 
 export type DatabaseTaskType = {
   id: string;

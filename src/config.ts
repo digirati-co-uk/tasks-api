@@ -1,13 +1,27 @@
-export const config = {
-  host: process.env.DATABASE_HOST as string,
-  port: process.env.DATABASE_PORT ? +process.env.DATABASE_PORT : 5432,
-  name: 'default',
-  username: process.env.DATABASE_USER as string,
-  password: process.env.DATABASE_PASSWORD as string,
-  database: process.env.DATABASE_NAME as string,
-  schema: process.env.DATABASE_SCHEMA ? process.env.DATABASE_SCHEMA : 'public',
-  synchronize: process.env.NODE_ENV === 'development',
-  logging: true,
+import { getConfig } from './utility/get-config';
+import { AppConfig } from './types';
+
+const baseConfig = getConfig(process.cwd());
+
+export const config: AppConfig = {
+  queue: baseConfig,
+  log: true,
+  enableQueue: !!process.env.REDIS_HOST,
+  // Defaults to true, unless MIGRATE=0 or MIGRATE=false
+  migrate: process.env.MIGRATE ? !(process.env.MIGRATE.toLowerCase() === 'false' || process.env.MIGRATE === '0') : true,
+  postgres: {
+    host: process.env.DATABASE_HOST as string,
+    port: process.env.DATABASE_PORT ? +process.env.DATABASE_PORT : 5432,
+    username: process.env.DATABASE_USER as string,
+    password: process.env.DATABASE_PASSWORD as string,
+    database: process.env.DATABASE_NAME as string,
+  },
+  env: process.env.NODE_ENV || 'development',
+  queueList: process.env.QUEUE_LIST ? process.env.QUEUE_LIST.split(',') : [],
+  redis: {
+    host: process.env.REDIS_HOST,
+    db: Number(process.env.REDIS_DB ? process.env.REDIS_DB : '2'),
+  },
 };
 
 export const port = process.env.SERVER_PORT || 3000;

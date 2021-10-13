@@ -9,6 +9,10 @@ export const errorHandler: Middleware = async (context, next) => {
   try {
     await next();
   } catch (err) {
+    if (process.env.NODE_ENV === 'test') {
+      console.log(err.toString());
+    }
+
     if (err instanceof RequestError) {
       context.response.body = { error: err.message };
       context.status = 400;
@@ -16,7 +20,7 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.status = 500;
     } else if (err instanceof NotFound) {
       if (err.message) {
-        context.response.body = {error: err.message};
+        context.response.body = { error: err.message };
       }
       context.response.status = 404;
     } else if (err instanceof Forbidden) {

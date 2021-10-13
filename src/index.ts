@@ -1,13 +1,12 @@
 import { createApp } from './app';
-import { port } from './config';
-import { router } from './router';
+import { config, port } from './config';
 
 async function main() {
-  const app = await createApp(router);
+  const app = await createApp(config);
 
   app.listen(port);
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (config.env !== 'production') {
     console.log(`Server ready at: http://localhost:3000`);
   }
 }
