@@ -6,6 +6,7 @@ module.exports = {
   rootDir: __dirname,
   globalSetup: require.resolve('@trendyol/jest-testcontainers/dist/setup.js'),
   globalTeardown: require.resolve('@trendyol/jest-testcontainers/dist/teardown.js'),
+
 };
 
 
