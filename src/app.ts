@@ -20,8 +20,6 @@ export async function createApp(config: AppConfig) {
     await migrate();
   }
 
-  app.keys = ['test-1']
-
   app.context.routes = router;
 
   // Validator.

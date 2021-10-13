@@ -160,13 +160,9 @@ class TaskAPIEnvironment extends TestcontainersEnvironment {
             {
               method: 'POST',
               url,
-              headers: {
-                'Content-Type': 'application/json',
-              },
             },
             user,
             req => {
-              (req as any).writable = true;
               if (data) {
                 req.write(data);
               }
