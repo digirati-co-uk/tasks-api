@@ -106,6 +106,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   try {
     const countQuery = sql<{ total_items: number }>`
         select COUNT(*) as total_items from tasks t
+        left join tasks dt on t.delegated_task = dt.id
         where t.context ?& ${sql.array(context.state.jwt.context, 'text')}
         ${subtaskExclusion}
         ${userExclusion}

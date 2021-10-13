@@ -1,7 +1,8 @@
-import { ApplicationState, Scopes } from '../types';
+import { ApplicationState, JWTConfig, Scopes } from '../types';
 
 export function parseToken(
   rawToken: string,
+  config: JWTConfig,
   asUser?: { userId?: number; siteId?: number; userName?: string }
 ): ApplicationState['jwt'] | undefined {
   const [, base64Payload] = rawToken.split('.');
@@ -22,18 +23,18 @@ export function parseToken(
 
     const context = [];
 
-    const userId = isService && asUser ? `urn:madoc:user:${asUser.userId}` : token.sub;
+    const userId = isService && asUser ? `${config.userUrnPrefix || 'urn:madoc:user:'}${asUser.userId}` : token.sub;
     const userName = isService && asUser && asUser.userName ? asUser.userName : token.name;
 
     if (isService && asUser && asUser.siteId) {
-      context.push(`urn:madoc:site:${asUser.siteId}`); // @todo remove in madoc in favour of fully resolved ids.
+      context.push(`${config.siteUrnPrefix || 'urn:madoc:site:'}${asUser.siteId}`); // @todo remove in madoc in favour of fully resolved ids.
     } else {
       context.push(token.iss);
     }
 
     return {
       context: context,
-      scope: token.scope.split(' '),
+      scope: typeof token.scope === 'string' ? token.scope.split(' ') : token.scope,
       user: {
         id: userId,
         name: userName,

@@ -1,8 +1,10 @@
 import { createPool } from 'slonik';
-import { config } from '../config';
+import { DBConfig } from '../types';
 
-export function createPostgresPool() {
+export function createPostgresPool(config: DBConfig) {
   return createPool(
-    `postgres://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`
+    typeof config === 'string'
+      ? config
+      : `postgres://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`
   );
 }

@@ -1,37 +1,39 @@
-import { RouteMiddleware } from '../types';
+import { JWTConfig, RouteMiddleware } from '../types';
 import { NotFound } from '../errors/not-found';
 import { getToken } from '../utility/get-token';
 import { parseToken } from '../utility/parse-token';
 
-export const parseJwt: RouteMiddleware = async (context, next) => {
-  const token = getToken(context);
+export function parseJwt(_config: JWTConfig = {}): RouteMiddleware {
+  const config: JWTConfig = _config || {};
 
-  if (!token) {
-    throw new NotFound();
-  }
+  return async (context, next) => {
+    const token = getToken(context);
 
-  const asUser =
-    context.request.headers['x-madoc-site-id'] || context.request.headers['x-madoc-user-id']
-      ? {
-          siteId: context.request.headers['x-madoc-site-id']
-            ? Number(context.request.headers['x-madoc-site-id'])
-            : undefined,
-          userId: context.request.headers['x-madoc-user-id']
-            ? Number(context.request.headers['x-madoc-user-id'])
-            : undefined,
-          userName: context.request.headers['x-madoc-user-name']
-            ? context.request.headers['x-madoc-user-name']
-            : undefined,
-        }
-      : undefined;
+    if (!token) {
+      throw new NotFound();
+    }
 
-  const jwt = parseToken(token, asUser);
+    const userIdHeader = config.userIdHeader || 'x-madoc-user-id';
+    const userNameHeader = config.userNameHeader || 'x-madoc-user-name';
+    const siteIdHeader = config.siteIdHeader || 'x-madoc-site-id';
 
-  if (!jwt) {
-    throw new NotFound();
-  }
+    const asUser =
+      context.request.headers[siteIdHeader] || context.request.headers[userIdHeader]
+        ? {
+            siteId: context.request.headers[siteIdHeader] ? Number(context.request.headers[siteIdHeader]) : undefined,
+            userId: context.request.headers[userIdHeader] ? Number(context.request.headers[userIdHeader]) : undefined,
+            userName: context.request.headers[userNameHeader] ? context.request.headers[userNameHeader] : undefined,
+          }
+        : undefined;
 
-  context.state.jwt = jwt;
+    const jwt = parseToken(token, config, asUser);
 
-  await next();
-};
+    if (!jwt) {
+      throw new NotFound();
+    }
+
+    context.state.jwt = jwt;
+
+    await next();
+  };
+}

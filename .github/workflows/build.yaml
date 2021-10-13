@@ -50,3 +50,5 @@ jobs:
       - run: yarn install --frozen-lockfile --non-interactive
 
       - run: yarn run build
+
+      - run: yarn test

@@ -7,6 +7,7 @@
   "scripts": {
     "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
     "build": "NODE_ENV=production tsc -p .",
+    "test": "jest --coverage",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
   },
@@ -28,6 +29,8 @@
   },
   "devDependencies": {
     "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
+    "@trendyol/jest-testcontainers": "^2.1.0",
+    "@types/jest": "^27.0.2",
     "@types/koa": "^2.11.0",
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
@@ -40,8 +43,13 @@
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react-hooks": "^2.1.2",
+    "jest": "^27.2.5",
+    "koa-create-context": "^1.0.2",
+    "mock-req": "^0.2.0",
+    "mock-res": "^0.5.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
+    "ts-jest": "^27.0.5",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3",
     "typescript-json-schema": "^0.42.0"

@@ -24,6 +24,7 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
   if (task.context) {
     taskContext.push(...task.context);
   }
+
   const insertedTask = await insertTask(context.connection, {
     id,
     task,
