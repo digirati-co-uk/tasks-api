@@ -1,5 +1,4 @@
 // For coverage.
-import '../src/app';
 import { createApp } from '../src/app';
 
 beforeAll(async () => {

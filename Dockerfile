@@ -10,8 +10,18 @@ RUN yarn install --no-interactive --frozen-lockfile
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
 COPY ./tsconfig.json /home/node/app/tsconfig.json
+COPY ./migrate.js /home/node/app/migrate.js
 
-RUN yarn build
+RUN yarn build-es
+
+FROM node:12 as deps
+
+WORKDIR /home/node/app
+
+ADD ./package.json /home/node/app/package.json
+ADD ./yarn.lock /home/node/app/yarn.lock
+
+RUN LDFLAGS='-static-libgcc -static-libstdc++' yarn install --production --no-interactive --frozen-lockfile
 
 FROM node:12-alpine
 
@@ -22,15 +32,12 @@ LABEL org.opencontainers.image.licenses='MIT'
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2
-
-COPY --from=build /home/node/app/lib /home/node/app/lib
+COPY --from=build /home/node/app/dist /home/node/app/dist
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+COPY --from=deps /home/node/app/node_modules /home/node/app/node_modules
 COPY ./schemas /home/node/app/schemas
 COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
-
-RUN yarn install --no-dev --no-interactive --frozen-lockfile
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost
@@ -44,11 +51,9 @@ ENV REDIS_HOST=''
 
 EXPOSE 3000
 
-USER node
-
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
 
-CMD ["pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
+CMD ["node_modules/.bin/pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
 

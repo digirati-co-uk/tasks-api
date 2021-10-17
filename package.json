@@ -1,13 +1,23 @@
 {
-  "name": "@madoc-platform/tasks-api",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@madoc.io/tasks-api",
+  "version": "0.0.2",
+  "main": "dist/app.js",
   "license": "MIT",
   "author": "Stephen Fraser <stephen.fraser@digirati.com>",
+  "files": [
+    "dist",
+    "schemas",
+    "migrations",
+    "config.json"
+  ],
   "scripts": {
     "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
-    "build": "NODE_ENV=production tsc -p . && yarn generate-create-task-schema && yarn generate-update-task-schema",
+    "build": "NODE_ENV=production yarn build-es && yarn build-app && yarn generate-create-task-schema && yarn generate-update-task-schema",
+    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:bullmq",
+    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:bullmq",
+    "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
     "test": "jest --coverage",
+    "prepare": "yarn build-app && yarn types-app",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
   },
@@ -15,6 +25,11 @@
     "slonik-sql-tag-raw": "1.0.2"
   },
   "dependencies": {
+    "pg": "^8.7.1",
+    "pm2": "^5.1.2",
+    "bullmq": "^1.8.5"
+  },
+  "devDependencies": {
     "@koa/router": "^8.0.6",
     "@slonik/migrator": "^0.2.0",
     "@slonik/typegen": "^0.3.1",
@@ -25,9 +40,7 @@
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
     "slonik": "^22.4.3",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
+    "uuid": "^8.3.2",
     "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
     "@trendyol/jest-testcontainers": "^2.1.0",
     "@types/jest": "^27.0.2",
@@ -39,6 +52,7 @@
     "@types/uuid": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^2.4.0",
     "@typescript-eslint/parser": "^2.4.0",
+    "esbuild": "^0.13.8",
     "eslint": "^6.8.0",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-prettier": "^3.1.1",
@@ -53,5 +67,8 @@
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3",
     "typescript-json-schema": "^0.42.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

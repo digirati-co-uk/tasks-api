@@ -1,5 +1,6 @@
 import { getConfig } from './utility/get-config';
 import { AppConfig } from './types';
+import * as path from 'path';
 
 const baseConfig = getConfig(process.cwd());
 
@@ -9,6 +10,7 @@ export const config: AppConfig = {
   enableQueue: !!process.env.REDIS_HOST,
   // Defaults to true, unless MIGRATE=0 or MIGRATE=false
   migrate: process.env.MIGRATE ? !(process.env.MIGRATE.toLowerCase() === 'false' || process.env.MIGRATE === '0') : true,
+  migrationsPath: path.join(process.cwd(), 'migrations'),
   postgres: {
     host: process.env.DATABASE_HOST as string,
     port: process.env.DATABASE_PORT ? +process.env.DATABASE_PORT : 5432,
