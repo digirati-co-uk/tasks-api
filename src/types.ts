@@ -17,9 +17,16 @@ export type AppConfig = {
   redis?: ConnectionOptions;
   enableQueue?: boolean;
   jwt?: JWTConfig;
-  migrate: boolean;
   log?: boolean;
-};
+} & (
+  | {
+      migrate: false | undefined;
+    }
+  | {
+      migrate: true;
+      migrationsPath: string;
+    }
+);
 
 export type BaseQueueConfig = {
   dispatch: {

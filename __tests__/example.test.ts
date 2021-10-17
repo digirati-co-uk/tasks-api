@@ -1,6 +1,5 @@
 // For coverage.
-import '../src/app';
-import { createApp } from '../src/app';
+import { createApp } from '../dist/app';
 
 beforeAll(async () => {
   await global.setApp(baseConfig => createApp(baseConfig));

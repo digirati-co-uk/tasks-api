@@ -17,7 +17,7 @@ export async function createApp(config: AppConfig) {
   const pool = createPostgresPool(config.postgres);
 
   if (config.migrate) {
-    await migrate();
+    await migrate(config, pool);
   }
 
   app.context.routes = router;
