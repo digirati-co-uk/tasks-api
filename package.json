@@ -1,6 +1,6 @@
 {
   "name": "@madoc.io/tasks-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/app.js",
   "license": "MIT",
   "author": "Stephen Fraser <stephen.fraser@digirati.com>",
