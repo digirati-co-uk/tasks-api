@@ -41,7 +41,7 @@
     "koa-logger": "^3.2.1",
     "slonik": "^22.4.3",
     "uuid": "^8.3.2",
-    "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
+    "@fesk/eslint-config-standard": "1.4.0-pr.6090dce5",
     "@trendyol/jest-testcontainers": "^2.1.0",
     "@types/jest": "^27.0.2",
     "@types/koa": "^2.11.0",
