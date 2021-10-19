@@ -28,6 +28,12 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/digirati-co-uk/tasks-api
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Set up Docker Buildx
         id: buildx
