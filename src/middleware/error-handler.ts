@@ -10,7 +10,7 @@ export const errorHandler: Middleware = async (context, next) => {
     await next();
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {
-      console.log(err.toString());
+      console.log((err as Error).toString());
     }
 
     if (err instanceof RequestError) {

@@ -34,7 +34,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string
     events: events,
     metadata: metadata,
     subtasks: subtasks
-      ? subtasks.map(task => {
+      ? subtasks.map((task) => {
           const subtask: any = {
             id: task.id,
             type: task.type,

@@ -13,6 +13,8 @@ import MockReq from 'mock-req';
 // @ts-ignore
 import MockRes from 'mock-res';
 import compose from 'koa-compose';
+import { AppConfig } from './src/types';
+import { WorkerOptions } from 'bullmq';
 
 type NewIncomingMessage = IncomingMessage & Transform;
 
@@ -42,8 +44,11 @@ declare global {
       asUser: (user: Partial<{ name: string; scope: string; iss: string; sub: string }>) => MiniApi;
       __TESTCONTAINERS__: Array<any>;
       __TESTCONTAINERS_POSTGRES_IP__: string;
+      __TESTCONTAINERS_REDIS_IP__: string;
       __TESTCONTAINERS_POSTGRES_NAME__: string;
       __TESTCONTAINERS_POSTGRES_PORT_5432__: number;
+      __TESTCONTAINERS_REDIS_PORT_6379__: number;
+      workerOptions: WorkerOptions;
     }
   }
 }
@@ -58,11 +63,13 @@ class TaskAPIEnvironment extends TestcontainersEnvironment {
   async setup() {
     await super.setup();
 
-    const host = this.global.__TESTCONTAINERS_POSTGRES_IP__;
-    const port = this.global.__TESTCONTAINERS_POSTGRES_PORT_5432__;
+    const pgHost = this.global.__TESTCONTAINERS_POSTGRES_IP__;
+    const pgPort = this.global.__TESTCONTAINERS_POSTGRES_PORT_5432__;
+    const redisHost = this.global.__TESTCONTAINERS_REDIS_IP__;
+    const redisPort = this.global.__TESTCONTAINERS_REDIS_PORT_6379__;
 
     // @ts-ignore
-    this.postgresUri = `postgresql://postgres:postgres@${host}:${port}/postgres`;
+    this.postgresUri = `postgresql://postgres:postgres@${pgHost}:${pgPort}/postgres`;
     const slonik = createPool(this.postgresUri);
 
     this.migrator = setupSlonikMigrator({
@@ -75,14 +82,26 @@ class TaskAPIEnvironment extends TestcontainersEnvironment {
     });
 
     this.migrations = await this.migrator.up();
-
-    this.global.setApp = async cb => {
+    this.global.workerOptions = {
+      connection: {
+        host: redisHost,
+        port: redisPort,
+        db: 2,
+      },
+    };
+    this.global.setApp = async (cb: (options: AppConfig) => Koa | Promise<Koa>) => {
       await this.setApp(
         await cb({
           postgres: this.postgresUri,
           env: 'test',
-          queueList: [],
+          queueList: ['jest'],
           migrate: false,
+          enableQueue: true,
+          redis: {
+            host: redisHost,
+            port: redisPort,
+            db: 2,
+          },
         })
       );
     };
@@ -123,7 +142,7 @@ class TaskAPIEnvironment extends TestcontainersEnvironment {
       await (app as any).handleRequest(ctx, fn);
 
       if (ctx.response.body && ctx.response.is('application/json')) {
-        ctx.response.body = JSON.parse(ctx.response.body);
+        ctx.response.body = JSON.parse(ctx.response.body as any);
       }
 
       return ctx.response;
@@ -213,7 +232,7 @@ class TaskAPIEnvironment extends TestcontainersEnvironment {
   }
 
   async stopApp() {
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       if (this.serverListener) {
         this.serverListener.close(() => {
           resolve();

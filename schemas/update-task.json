@@ -39,6 +39,9 @@
             "description": "An optional description of the task.",
             "type": "string"
         },
+        "metadata": {
+            "description": "Any metadata on the task."
+        },
         "name": {
             "description": "The name of the task.",
             "type": "string"

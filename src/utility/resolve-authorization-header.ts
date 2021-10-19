@@ -12,7 +12,7 @@ export function resolveAuthorizationHeader(ctx: Context, { passthrough = false }
     const credentials = parts[1];
 
     if (/^Bearer$/i.test(scheme)) {
-      return credentials;
+      return credentials as string;
     }
   }
   if (!passthrough) {

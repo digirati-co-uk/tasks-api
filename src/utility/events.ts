@@ -33,7 +33,7 @@ export const standaloneEvents: EventPrefix[] = [
   'subtask_status',
 ];
 
-type Event<Prefix extends EventPrefix, Value extends any = never> = Value extends never
+type Event<Prefix extends EventPrefix, Value = never> = Value extends never
   ? [string, Prefix]
   : [string, Prefix, Value];
 
@@ -89,7 +89,7 @@ export function parseEvent<E extends AnyEvent>(event: string, queueList: string[
 }
 
 export function parseEvents(events: string[] = [], queueList: string[] = []): AnyEvent[] {
-  return events.map(e => parseEvent(e, queueList)).filter(ev => ev !== undefined) as AnyEvent[];
+  return events.map((e) => parseEvent(e, queueList)).filter((ev) => ev !== undefined) as AnyEvent[];
 }
 
 export function validateEvents(events: string[], queueList: string[]) {

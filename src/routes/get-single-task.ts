@@ -1,7 +1,7 @@
 import { RouteMiddleware } from '../types';
 import { getTask } from '../database/get-task';
 
-export const getSingleTask: RouteMiddleware<{ id: string }> = async context => {
+export const getSingleTask: RouteMiddleware<{ id: string }> = async (context) => {
   const assignee = Boolean(context.query.assignee);
   context.response.body = await getTask(context.connection, {
     context: context.state.jwt.context,
@@ -12,6 +12,10 @@ export const getSingleTask: RouteMiddleware<{ id: string }> = async context => {
     page: Number(context.query.page || 1),
     all: Boolean(context.query.all),
     subtaskFields: assignee ? ['assignee'] : [],
-    subjects: context.query.subjects,
+    subjects: Array.isArray(context.query.subjects)
+      ? context.query.subjects
+      : context.query.subjects
+      ? [context.query.subjects]
+      : [],
   });
 };

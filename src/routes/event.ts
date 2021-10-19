@@ -2,10 +2,9 @@ import { RouteMiddleware } from '../types';
 import { sql } from 'slonik';
 import { NotFound } from '../errors/not-found';
 
-export const postEvent: RouteMiddleware<
-  { id: string; event: string },
-  { subject?: string; state?: any }
-> = async context => {
+export const postEvent: RouteMiddleware<{ id: string; event: string }, { subject?: string; state?: any }> = async (
+  context
+) => {
   const id = context.params.id;
   const event = context.params.event;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;

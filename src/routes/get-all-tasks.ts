@@ -34,7 +34,7 @@ function getStatus(statusQuery: string) {
   return sql`and t.status = any (${sql.array(parsedStatuses, sql`int[]`)})`;
 }
 
-export const getAllTasks: RouteMiddleware = async context => {
+export const getAllTasks: RouteMiddleware = async (context) => {
   // Subject facet.
   // Type filter.
   // Include sub-tasks filter.
@@ -47,7 +47,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const parentSubjectFilter = context.query.subject_parent
     ? sql`and t.subject_parent = ${context.query.subject_parent}`
     : sql``;
-  const statusFilter = getStatus(context.query.status);
+  const statusFilter = getStatus(context.query.status as string);
   const subtaskExclusion =
     context.query.all_tasks || context.query.root_task_id || context.query.parent_task_id
       ? sql``
@@ -81,10 +81,10 @@ export const getAllTasks: RouteMiddleware = async context => {
 
   // Modified search
   const modifiedStartFilter = context.query.modified_date_start
-    ? sql`and t.modified_at > ${date(new Date(context.query.modified_date_start))}`
+    ? sql`and t.modified_at > ${date(new Date(context.query.modified_date_start as string))}`
     : sql``;
   const modifiedEndFilter = context.query.modified_date_end
-    ? sql`and t.modified_at <= ${date(new Date(context.query.modified_date_end))}`
+    ? sql`and t.modified_at <= ${date(new Date(context.query.modified_date_end as string))}`
     : sql``;
 
   const modifiedInterval = context.query.modified_date_interval
@@ -93,10 +93,10 @@ export const getAllTasks: RouteMiddleware = async context => {
 
   // Created search
   const createdStartFilter = context.query.created_date_start
-    ? sql`and t.created_at > ${date(new Date(context.query.created_date_start))}`
+    ? sql`and t.created_at > ${date(new Date(context.query.created_date_start as string))}`
     : sql``;
   const createdEndFilter = context.query.created_date_end
-    ? sql`and t.created_at <= ${date(new Date(context.query.created_date_end))}`
+    ? sql`and t.created_at <= ${date(new Date(context.query.created_date_end as string))}`
     : sql``;
 
   const createdInterval = context.query.created_date_interval
@@ -155,7 +155,7 @@ export const getAllTasks: RouteMiddleware = async context => {
     );
 
     context.response.body = {
-      tasks: taskList.map(task => mapSingleTask(task)),
+      tasks: taskList.map((task) => mapSingleTask(task)),
       pagination: {
         page,
         totalResults: rowCount,

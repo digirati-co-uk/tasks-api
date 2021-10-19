@@ -11,4 +11,13 @@ module.exports = {
       text: 'server started',
     },
   },
+  redis: {
+    image: 'redis',
+    tag: '5-alpine',
+    ports: [6379],
+    wait: {
+      type: 'text',
+      text: 'Ready to accept connections',
+    },
+  },
 };
