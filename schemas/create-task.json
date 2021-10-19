@@ -53,6 +53,9 @@
             },
             "type": "array"
         },
+        "metadata": {
+            "description": "Custom metadata."
+        },
         "name": {
             "description": "A human-readable name for your task.",
             "type": "string"

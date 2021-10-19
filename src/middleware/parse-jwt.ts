@@ -26,7 +26,7 @@ export function parseJwt(_config: JWTConfig = {}): RouteMiddleware {
           }
         : undefined;
 
-    const jwt = parseToken(token, config, asUser);
+    const jwt = parseToken(token, config, asUser as any);
 
     if (!jwt) {
       throw new NotFound();
