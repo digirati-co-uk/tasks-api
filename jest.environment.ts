@@ -13,7 +13,7 @@ import MockReq from 'mock-req';
 // @ts-ignore
 import MockRes from 'mock-res';
 import compose from 'koa-compose';
-import { AppConfig } from './dist/types';
+import { AppConfig } from './src/types';
 import { WorkerOptions } from 'bullmq';
 
 type NewIncomingMessage = IncomingMessage & Transform;

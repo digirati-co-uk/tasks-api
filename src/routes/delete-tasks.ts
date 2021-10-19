@@ -16,14 +16,14 @@ export const batchDeleteTasks: RouteMiddleware = async (context, next) => {
     throw new RequestError();
   }
 
-  if (!!resourceId) {
+  if (resourceId) {
     await context.connection.query(sql`
       delete from tasks
       where state ->> 'resourceId' = ${String(resourceId)};
     `);
   }
 
-  if (!!subject) {
+  if (subject) {
     await context.connection.query(sql`
       delete from tasks
       where subject = ${subject}

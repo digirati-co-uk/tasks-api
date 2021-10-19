@@ -69,8 +69,8 @@ export async function getTask(
     `
   );
 
-  const actualTask = taskList.find(t => t.id === id);
-  const subtasks = taskList.filter(t => t.id !== id);
+  const actualTask = taskList.find((t) => t.id === id);
+  const subtasks = taskList.filter((t) => t.id !== id);
 
   if (!actualTask) {
     throw new NotFound();

@@ -8,7 +8,7 @@ import { getTask } from '../database/get-task';
 import { validateEvents } from '../utility/events';
 import { mapSingleTask } from '../utility/map-single-task';
 
-export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateTask[]> = async context => {
+export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateTask[]> = async (context) => {
   const parentId = context.params.id;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
   const canCreate = isAdmin || context.state.jwt.scope.indexOf('tasks.create') !== -1;
@@ -28,7 +28,7 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
   const returnTasks: any[] = [];
   const isMany = Array.isArray(context.requestBody);
   const tasks: CreateTask[] = isMany ? (context.requestBody as CreateTask[]) : [context.requestBody as CreateTask];
-  await context.connection.transaction(async connection => {
+  await context.connection.transaction(async (connection) => {
     const rootTaskId = parentTask.root_task
       ? parentTask.root_task
       : parentTask.parent_task

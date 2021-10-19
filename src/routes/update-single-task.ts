@@ -6,7 +6,7 @@ import { RequestError } from '../errors/request-error';
 import { mapSingleTask } from '../utility/map-single-task';
 import { dispatchUpdateSubtaskStatus } from '../utility/dispatch-update-subtask-status';
 
-export const updateSingleTask: RouteMiddleware<{ id: string }> = async context => {
+export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context) => {
   const id = context.params.id;
   const userId = context.state.jwt.user.id;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;

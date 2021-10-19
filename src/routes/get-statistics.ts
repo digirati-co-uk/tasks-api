@@ -2,7 +2,7 @@ import { RouteMiddleware } from '../types';
 import { sql } from 'slonik';
 import { NotFound } from '../errors/not-found';
 
-export const getStatistics: RouteMiddleware<{ id?: string }> = async context => {
+export const getStatistics: RouteMiddleware<{ id?: string }> = async (context) => {
   const id = context.params.id;
   const root = Boolean(context.query.root || false);
   const whereRoot = id ? (root ? sql`root_task = ${id}` : sql`parent_task = ${id}`) : undefined;

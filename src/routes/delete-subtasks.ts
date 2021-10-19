@@ -3,7 +3,7 @@ import { NotFound } from '../errors/not-found';
 import { sql } from 'slonik';
 import { castStringBool } from '../utility/cast-string-bool';
 
-export const deleteSubtasks: RouteMiddleware<{ id: string }> = async context => {
+export const deleteSubtasks: RouteMiddleware<{ id: string }> = async (context) => {
   if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
     throw new NotFound();
   }

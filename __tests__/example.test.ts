@@ -3,7 +3,7 @@ import { createApp } from '../src/app';
 import { Worker } from 'bullmq';
 
 beforeAll(async () => {
-  await global.setApp(baseConfig => createApp(baseConfig));
+  await global.setApp((baseConfig) => createApp(baseConfig));
 });
 
 describe('Creating and fetching a task', () => {
@@ -41,10 +41,10 @@ describe('Creating and fetching a task', () => {
   test('Simple event', async () => {
     expect.assertions(4);
 
-    const worker = new Promise<Worker>(resolve => {
+    const worker = new Promise<Worker>((resolve) => {
       const _worker = new Worker(
         'jest',
-        async job => {
+        async (job) => {
           expect(job.name).toEqual('created');
           expect(job.data.type).toEqual('task-type-a');
           expect(job.data.context[0]).toEqual('urn:madoc:site:456');

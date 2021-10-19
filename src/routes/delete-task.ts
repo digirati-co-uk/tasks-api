@@ -2,7 +2,7 @@ import { RouteMiddleware } from '../types';
 import { NotFound } from '../errors/not-found';
 import { sql } from 'slonik';
 
-export const deleteTask: RouteMiddleware<{ id: string }> = async context => {
+export const deleteTask: RouteMiddleware<{ id: string }> = async (context) => {
   if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
     throw new NotFound();
   }

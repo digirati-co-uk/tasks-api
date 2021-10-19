@@ -1,7 +1,7 @@
 import { RouteMiddleware } from '../types';
 import { sql } from 'slonik';
 
-export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx => {
+export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async (ctx) => {
   const body = ctx.request.body;
   // Given a list of subjects
   const subjects = body && body.subjects ? body.subjects : ctx.query.subjects;

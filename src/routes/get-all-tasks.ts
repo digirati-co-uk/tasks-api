@@ -34,7 +34,7 @@ function getStatus(statusQuery: string) {
   return sql`and t.status = any (${sql.array(parsedStatuses, sql`int[]`)})`;
 }
 
-export const getAllTasks: RouteMiddleware = async context => {
+export const getAllTasks: RouteMiddleware = async (context) => {
   // Subject facet.
   // Type filter.
   // Include sub-tasks filter.
@@ -155,7 +155,7 @@ export const getAllTasks: RouteMiddleware = async context => {
     );
 
     context.response.body = {
-      tasks: taskList.map(task => mapSingleTask(task)),
+      tasks: taskList.map((task) => mapSingleTask(task)),
       pagination: {
         page,
         totalResults: rowCount,

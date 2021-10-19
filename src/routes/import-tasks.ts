@@ -2,7 +2,7 @@ import { sql, ValueExpressionType } from 'slonik';
 import { NotFound } from '../errors/not-found';
 import { DatabaseTaskType, RouteMiddleware } from '../types';
 
-export const importTasks: RouteMiddleware = async context => {
+export const importTasks: RouteMiddleware = async (context) => {
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
 
   if (!isAdmin) {
@@ -23,10 +23,7 @@ export const importTasks: RouteMiddleware = async context => {
         (task.status || 0).toString(),
         task.status_text || null,
         JSON.stringify(task.state) || '{}',
-        new Date(task.created_at)
-          .toISOString()
-          .replace('T', ' ')
-          .replace('Z', ''),
+        new Date(task.created_at).toISOString().replace('T', ' ').replace('Z', ''),
         task.parent_task || null,
         JSON.stringify(task.parameters) || '[]',
         task.creator_id || null,
@@ -36,10 +33,7 @@ export const importTasks: RouteMiddleware = async context => {
         task.assignee_name || null,
         JSON.stringify(task.context),
         task.events ? sql.array(task.events, 'text') : null,
-        new Date(task.modified_at)
-          .toISOString()
-          .replace('T', ' ')
-          .replace('Z', ''),
+        new Date(task.modified_at).toISOString().replace('T', ' ').replace('Z', ''),
         task.root_task || null,
         task.subject_parent || null,
         task.delegated_owners ? sql.array(task.delegated_owners, 'text') : null,
@@ -56,7 +50,7 @@ export const importTasks: RouteMiddleware = async context => {
     // ...
     // ( rows[n] )
     return sql.join(
-      rows.map(row => sql`(${row})`),
+      rows.map((row) => sql`(${row})`),
       sql`,`
     );
   };
@@ -99,7 +93,7 @@ export const importTasks: RouteMiddleware = async context => {
         context.state.jwt.context,
         'text'
       )} and not (id = any (${sql.array(
-        tasks.map(task => task.id),
+        tasks.map((task) => task.id),
         'uuid' as any
       )}))`
     );

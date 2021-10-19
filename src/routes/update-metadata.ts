@@ -3,7 +3,7 @@ import { NotFound } from '../errors/not-found';
 import { sql } from 'slonik';
 import { mapSingleTask } from '../utility/map-single-task';
 
-export const updateMetadata: RouteMiddleware<{ id: string }> = async context => {
+export const updateMetadata: RouteMiddleware<{ id: string }> = async (context) => {
   const id = context.params.id;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
 

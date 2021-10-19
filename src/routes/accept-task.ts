@@ -3,7 +3,7 @@ import { sql } from 'slonik';
 import { getTask } from '../database/get-task';
 import { mapSingleTask } from '../utility/map-single-task';
 
-export const acceptTask: RouteMiddleware<{ id: string }, { omitSubtasks: boolean }> = async context => {
+export const acceptTask: RouteMiddleware<{ id: string }, { omitSubtasks: boolean }> = async (context) => {
   const id = context.params.id;
   const scope = context.state.jwt.scope;
   const userId = context.state.jwt.user.id;
