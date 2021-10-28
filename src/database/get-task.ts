@@ -39,7 +39,7 @@ export async function getTask(
   const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
   const statusQuery = typeof status !== 'undefined' ? sql`and t.status = ${status}` : sql``;
   const subjectsQuery =
-    typeof subjects !== 'undefined' ? sql`and t.subject = any (${sql.array(subjects, 'text')})` : sql``;
+    typeof subjects !== 'undefined' && subjects.length ? sql`and t.subject = any (${sql.array(subjects, 'text')})` : sql``;
 
   const fullTaskList = sql`
       select t.*
