@@ -1,6 +1,7 @@
 import { getConfig } from './utility/get-config';
 import { AppConfig } from './types';
 import * as path from 'path';
+import { castStringNumber } from './utility/cast-string-number';
 
 const baseConfig = getConfig(process.cwd());
 
@@ -23,6 +24,15 @@ export const config: AppConfig = {
   redis: {
     host: process.env.REDIS_HOST,
     db: Number(process.env.REDIS_DB ? process.env.REDIS_DB : '2'),
+  },
+  bullmq: {
+    defaultJobOptions: {
+      attempts: castStringNumber(process.env.QUEUE_RETRY_ATTEMPTS, 5),
+      backoff: {
+        type: 'exponential',
+        delay: 1000,
+      },
+    },
   },
 };
 

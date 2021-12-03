@@ -3,15 +3,15 @@ import * as Koa from 'koa';
 import { router } from './router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
-import { JobsOptions, Queue } from 'bullmq';
+import { JobsOptions, ConnectionOptions, Queue, QueueOptions } from 'bullmq';
 import { EventPrefix } from './utility/events';
-import { ConnectionOptions } from 'bullmq/src/interfaces/redis-options';
 
 export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
 
 export type AppConfig = {
   postgres: DBConfig;
   queue?: BaseQueueConfig;
+  bullmq?: QueueOptions;
   env: string;
   queueList: string[];
   redis?: ConnectionOptions;
