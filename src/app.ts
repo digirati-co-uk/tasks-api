@@ -31,6 +31,7 @@ export async function createApp(config: AppConfig) {
     app.context.getQueue = (name: string) =>
       new Queue(name, {
         connection: config.redis,
+        ...(config.bullmq || {}),
       });
   }
 

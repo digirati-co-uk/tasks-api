@@ -12,6 +12,7 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
   const canOnlyProgress = !isAdmin && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
   const taskChanges: UpdateTask = context.requestBody;
+  let statusChanged = false;
 
   const { assignee_id, creator_id, delegated_assignee, events, type } = await context.connection.one<{
     assignee_id: string;
@@ -32,6 +33,7 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
     // Only apply status change.
     const updateRows = [];
     if (typeof taskChanges.status !== 'undefined') {
+      statusChanged = true;
       updateRows.push(sql`status = ${taskChanges.status}`);
     }
     if (typeof taskChanges.status_text !== 'undefined') {
@@ -53,13 +55,18 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
     }
 
     context.state.dispatch(taskWithId, 'modified');
-    context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });
+
+    if (statusChanged) {
+      context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });
+    }
 
     context.response.body = mapSingleTask(task);
 
     // Special event:
     // subtask_type_status.{type}.{status}
-    await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
+    if (statusChanged) {
+      await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
+    }
 
     return;
   }
@@ -109,6 +116,7 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
     updateRows.push(sql`metadata = metadata || ${JSON.stringify(taskChanges.metadata)}`);
   }
   if (typeof taskChanges.status !== 'undefined') {
+    statusChanged = true;
     updateRows.push(sql`status = ${taskChanges.status}`);
     context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });
   }
@@ -131,7 +139,9 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
 
   // Special event:
   // subtask_type_status.{type}.{status}
-  await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
+  if (statusChanged) {
+    await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
+  }
 
   context.state.dispatch(taskWithId, 'modified');
 

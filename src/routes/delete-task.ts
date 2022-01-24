@@ -11,13 +11,27 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async (context) => {
     SELECT id, type, events FROM tasks WHERE id = ${context.params.id}
   `);
 
-  const { rowCount } = await context.connection.query(sql`
+  // We need to delete more manually now.
+  const { rowCount: rc1 } = await context.connection.query(sql`
+      DELETE FROM tasks
+      WHERE root_task = ${context.params.id}
+  `);
+
+  const { rowCount: rc2 } = await context.connection.query(sql`
+      DELETE FROM tasks
+      WHERE delegated_task = ${context.params.id}
+  `);
+
+  const { rowCount: rc3 } = await context.connection.query(sql`
     DELETE FROM tasks 
     WHERE id = ${context.params.id}
   `);
 
+  const rowCount = rc1 + rc2 + rc3;
+
   if (rowCount === 0) {
-    context.response.status = 404;
+    // Don't 404, just assume it's already deleted.
+    context.response.status = 200;
     return;
   }
 

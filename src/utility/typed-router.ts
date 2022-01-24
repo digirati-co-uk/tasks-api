@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import koaBody from 'koa-body';
+import koaBody, { IKoaBodyOptions } from 'koa-body';
 import { requestBody } from '../middleware/request-body';
 import { RouteMiddleware } from '../types';
 
@@ -32,6 +32,9 @@ export class TypedRouter<
   private router = new Router();
 
   constructor(routes: MappedRoutes) {
+    const koaBodyOptions: IKoaBodyOptions = {
+      jsonLimit: '50mb',
+    };
     const routeNames = Object.keys(routes) as Routes[];
     for (const route of routeNames) {
       const [method, path, func, schemaName] = routes[route];
@@ -43,7 +46,7 @@ export class TypedRouter<
           break;
         case TypedRouter.POST:
           // @ts-ignore
-          this.router.post(route, path, koaBody(), requestBody(schemaName), func);
+          this.router.post(route, path, koaBody(koaBodyOptions), requestBody(schemaName), func);
           break;
         case TypedRouter.PATCH:
           // @ts-ignore
