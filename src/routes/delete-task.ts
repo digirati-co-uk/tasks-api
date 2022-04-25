@@ -23,11 +23,16 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async (context) => {
   `);
 
   const { rowCount: rc3 } = await context.connection.query(sql`
+      DELETE FROM tasks
+      WHERE parent_task = ${context.params.id}
+  `);
+
+  const { rowCount: rc4 } = await context.connection.query(sql`
     DELETE FROM tasks 
     WHERE id = ${context.params.id}
   `);
 
-  const rowCount = rc1 + rc2 + rc3;
+  const rowCount = rc1 + rc2 + rc3 + rc4;
 
   if (rowCount === 0) {
     // Don't 404, just assume it's already deleted.
