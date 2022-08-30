@@ -2,6 +2,7 @@ import { RouteMiddleware } from '../types';
 import { NotFoundError, sql } from 'slonik';
 import { date } from '../utility/date';
 import { mapSingleTask } from '../utility/map-single-task';
+import { castStringBool } from '../utility/cast-string-bool';
 
 function getStatus(statusQuery: string) {
   if (!statusQuery) {
@@ -41,6 +42,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
   const canCreate = context.state.jwt.scope.indexOf('tasks.create') !== -1;
   const userId = context.state.jwt.user.id;
+  const all = isAdmin && castStringBool(context.query.all);
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
   const sortByNewest = context.query.sortBy ? context.query.sort_by === 'newest' : false;
@@ -49,7 +51,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     : sql``;
   const statusFilter = getStatus(context.query.status as string);
   const subtaskExclusion =
-    context.query.all_tasks || context.query.root_task_id || context.query.parent_task_id
+    castStringBool(context.query.all_tasks) || context.query.root_task_id || context.query.parent_task_id
       ? sql``
       : sql`and t.parent_task is null`;
   const assigneeId = context.query.assignee;
@@ -72,7 +74,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
   const userPerPage = context.query.per_page ? Number(context.query.per_page) : 50;
   const perPage = userPerPage < 50 ? userPerPage : 50;
   const offset = (page - 1) * perPage;
-  const taskPagination = sql`limit ${perPage} offset ${offset}`;
+  const taskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
   const detail = !!context.query.detail;
   const detailedFields = detail
     ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.subject_parent, t.root_task, t.parent_task, t.modified_at, t.state`
