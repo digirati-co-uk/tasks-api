@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.5...main)
+## [Unreleased](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.6...main)
 
 <!--
 ### Added
@@ -15,7 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [1.0.4](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.4...v1.0.5) - 2022-04-25
+## [1.0.6](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.5...v1.0.6) - 2022-08-30
+
+### Fixed
+- Missing handling of `all` parameter in task list
+- Fixed casting of boolean query strings (e.g. handling `?all_tasks=false`)
+
+## [1.0.5](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.4...v1.0.5) - 2022-04-25
 
 ### Fixed
 - Fixed orphaned tasks (via parent_task)
