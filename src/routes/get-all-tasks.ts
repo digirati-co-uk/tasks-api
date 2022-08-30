@@ -2,6 +2,7 @@ import { RouteMiddleware } from '../types';
 import { NotFoundError, sql } from 'slonik';
 import { date } from '../utility/date';
 import { mapSingleTask } from '../utility/map-single-task';
+import { castStringBool } from '../utility/cast-string-bool';
 
 function getStatus(statusQuery: string) {
   if (!statusQuery) {
@@ -49,7 +50,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     : sql``;
   const statusFilter = getStatus(context.query.status as string);
   const subtaskExclusion =
-    context.query.all_tasks || context.query.root_task_id || context.query.parent_task_id
+    castStringBool(context.query.all_tasks) || context.query.root_task_id || context.query.parent_task_id
       ? sql``
       : sql`and t.parent_task is null`;
   const assigneeId = context.query.assignee;

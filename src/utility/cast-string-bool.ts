@@ -7,7 +7,7 @@ export function castStringBool(str?: string | string[]): boolean {
     str = str[0];
   }
 
-  if (str.toLowerCase() === 'false') {
+  if ((str as string).toLowerCase() === 'false') {
     return false;
   }
 
