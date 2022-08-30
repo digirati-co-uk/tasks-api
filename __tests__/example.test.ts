@@ -7,6 +7,14 @@ beforeAll(async () => {
 });
 
 describe('Creating and fetching a task', () => {
+  let createdTask: string | null = null;
+
+  afterAll(async () => {
+    if (createdTask) {
+      await global.asAdmin.delete(`/tasks/${createdTask}`);
+    }
+  });
+
   test('A task can be created', async () => {
     const created = await global.asAdmin.post('/tasks', {
       type: 'task-type-a',
@@ -19,6 +27,8 @@ describe('Creating and fetching a task', () => {
       status_text: 'not started',
       parameters: ['param-1', 'param-2'],
     });
+
+    createdTask = (created.body as any).id;
 
     // No error.
     expect(created.status).toEqual(201);
@@ -70,5 +80,30 @@ describe('Creating and fetching a task', () => {
 
     await (await worker).disconnect();
     await (await worker).close(true);
+  });
+});
+
+describe('Parameters', () => {
+  test('It will return more than 50 tasks with `?all=true` set', async () => {
+    // Create 75 tasks
+    for (let i = 0; i < 75; i++) {
+      await global.asAdmin.post('/tasks', {
+        type: 'task-type-a',
+        name: `A test task ${i}`,
+        description: `A description of a test task`,
+        subject: 'subject-with-tasks',
+        state: {},
+        events: [],
+        status: 0,
+        status_text: 'not started',
+        parameters: [],
+      });
+    }
+
+    const tasks = await global.asAdmin.get('/tasks?subject=subject-with-tasks');
+    expect((tasks.body as any).tasks).toHaveLength(50);
+
+    const allTasks = await global.asAdmin.get('/tasks?all=true&subject=subject-with-tasks');
+    expect((allTasks.body as any).tasks).toHaveLength(75);
   });
 });
