@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [1.0.7](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.6...v1.0.7)
+
+### Added
+- Added missing index on `delegated_task` which greatly improves performance of large tasks.
+
+### Fixed
+- Fixed permission issue with progressing tasks
+
 ## [1.0.6](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.5...v1.0.6) - 2022-08-30
 
 ### Fixed
