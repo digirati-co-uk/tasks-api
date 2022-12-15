@@ -10,7 +10,8 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
   const id = context.params.id;
   const userId = context.state.jwt.user.id;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
-  const canOnlyProgress = !isAdmin && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
+  const canCreate = isAdmin || context.state.jwt.scope.indexOf('tasks.create') !== -1;
+  const canOnlyProgress = !isAdmin && !canCreate && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
   const taskChanges: UpdateTask = context.requestBody;
   let statusChanged = false;
 
@@ -29,7 +30,7 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
     `);
 
   const taskWithId = { id, type, events };
-  if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId || delegated_assignee !== userId)) {
+  if (canOnlyProgress && (creator_id === userId || assignee_id === userId || delegated_assignee === userId)) {
     // Only apply status change.
     const updateRows = [];
     if (typeof taskChanges.status !== 'undefined') {
