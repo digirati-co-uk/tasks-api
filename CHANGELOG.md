@@ -15,6 +15,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [v1.1.0](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.6...v1.1.0)
+
+### Added
+- Added missing index on `delegated_task` which greatly improves performance of large tasks.
+- New sorting options
+  -`order_by=` now takes in a comma separated list of columns from the following list:
+    - `subject`
+    - `subject_parent`
+    - `created_at`
+    - `modified_at`
+    - `status`
+    - `title`
+  - Can optionally specify an order: (e.g. `subject:desc`)
+  - Multiple sorts will be processed in order: (e.g. `subject:desc,status:asc`)
+- Details root-task statistics
+  - adding `root_statistics=true` to `/tasks/:id` will enable
+  - Returns new field:
+```json
+{
+  "root_statistics": {
+    "accepted": 2,
+    "done": 4,
+    "error": 0,
+    "not_started": 0,
+    "progress": 3
+  }
+}
+```
+
+### Fixed
+- Fixed permission issue with progressing tasks
+
 ## [1.0.6](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.5...v1.0.6) - 2022-08-30
 
 ### Fixed
