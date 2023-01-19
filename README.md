@@ -72,3 +72,103 @@ List of events:
 - `subtask_status`
 
 Open an issue or discussion if you'd like more information on how these work.
+
+
+## API Documentation
+
+
+### Task lists
+get all tasks
+```
+GET /tasks
+```
+
+get all statistics
+```
+GET /tasks/stats
+```
+
+export tasks
+```
+GET /tasks/export-all
+```
+
+create task
+```
+POST /tasks
+```
+
+import tasks
+```
+POST /tasks/import
+```
+
+batch delete
+```
+DELETE /tasks
+```
+
+
+
+### Single tasks
+get single task
+```
+GET /tasks/:id
+```
+
+get task statistics
+```
+GET /tasks/:id/stats
+```
+
+update single task
+```
+PATCH /tasks/:id
+```
+
+update task metadata
+```
+PATCH /tasks/:id/metadata
+```
+
+delete task
+```
+DELETE /tasks/:id
+```
+
+delete subtasks
+```
+DELETE /tasks/:id/subtasks
+```
+
+create subtask
+```
+POST /tasks/:id/subtasks
+```
+
+get task subjects
+```
+GET /tasks/:id/subjects
+```
+
+post task subjects
+```
+POST /tasks/:id/subjects
+```
+
+accept task
+```
+POST /tasks/:id/accept
+```
+
+post task event
+```
+POST /tasks/:id/dispatch/:event
+```
+
+unassign task
+```
+POST /tasks/:id/unassign
+```
+
+
