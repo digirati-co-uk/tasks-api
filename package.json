@@ -17,7 +17,7 @@
     "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:bullmq",
     "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:bullmq",
     "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
-    "test": "jest --coverage",
+    "test": "jest --coverage --runInBand",
     "prepublishOnly": "yarn build-app && yarn types-app",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"

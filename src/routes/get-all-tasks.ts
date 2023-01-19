@@ -3,6 +3,7 @@ import { NotFoundError, sql } from 'slonik';
 import { date } from '../utility/date';
 import { mapSingleTask } from '../utility/map-single-task';
 import { castStringBool } from '../utility/cast-string-bool';
+import { parseSort } from '../utility/parse-sort';
 
 function getStatus(statusQuery: string) {
   if (!statusQuery) {
@@ -45,7 +46,38 @@ export const getAllTasks: RouteMiddleware = async (context) => {
   const all = isAdmin && castStringBool(context.query.all);
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
-  const sortByNewest = context.query.sortBy ? context.query.sort_by === 'newest' : false;
+  //const sortByNewest = context.query.sortBy ? context.query.sort_by === 'newest' : false;
+
+  // BC fix.
+  if (context.query.sort_by === 'newest') {
+    context.query.sort_by = 'modified_at:asc';
+  }
+
+  // Sort by subject
+  // Sort by title
+  // Sort by subject parent
+  // Sort by Created
+  // Sort by Status
+  // Sort by metadata field
+
+  const sorts = parseSort(context.query.sort_by || '', [
+    'subject',
+    'subject_parent',
+    'created_at',
+    'modified_at',
+    'status',
+    'title',
+  ]);
+
+  const orderBy = sorts.length
+    ? sql`
+    order by
+    ${sql.join(
+      sorts.map((s) => sql`${sql.identifier(['t', s.column])} ${s.desc ? sql`desc` : sql`asc`}`),
+      sql`,`
+    )}`
+    : sql`order by t.modified_at desc`;
+
   const parentSubjectFilter = context.query.subject_parent
     ? sql`and t.subject_parent = ${context.query.subject_parent}`
     : sql``;
@@ -79,7 +111,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
   const detailedFields = detail
     ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.subject_parent, t.root_task, t.parent_task, t.modified_at, t.state`
     : sql``;
-  const orderBy = sortByNewest ? sql`order by t.modified_at asc` : sql`order by t.modified_at desc`;
+  // const orderBy = sortByNewest ? sql`order by t.modified_at asc` : sql`order by t.modified_at desc`;
 
   // Modified search
   const modifiedStartFilter = context.query.modified_date_start
