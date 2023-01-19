@@ -12,6 +12,13 @@ export type FullSingleTask = CreateTask & {
   modified_at: string;
   context: string[];
   root_task?: string;
+  root_statistics?: {
+    error: number;
+    not_started: number;
+    accepted: number;
+    progress: number;
+    done: number;
+  };
   pagination?: {
     page: number;
     total_results: number;

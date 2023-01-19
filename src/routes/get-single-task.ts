@@ -18,5 +18,6 @@ export const getSingleTask: RouteMiddleware<{ id: string }> = async (context) =>
       : context.query.subjects
       ? [context.query.subjects as string]
       : [],
+    rootStatistics: castStringBool(context.query.root_statistics),
   });
 };

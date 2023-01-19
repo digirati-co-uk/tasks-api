@@ -1,6 +1,7 @@
 import { DatabasePoolConnectionType, sql } from 'slonik';
 import { NotFound } from '../errors/not-found';
 import { mapSingleTask } from '../utility/map-single-task';
+import { FullSingleTask } from '../schemas/FullSingleTask';
 
 export async function getTask(
   connection: DatabasePoolConnectionType,
@@ -15,6 +16,7 @@ export async function getTask(
     all,
     subtaskFields = [],
     subjects,
+    rootStatistics,
   }: {
     id: string;
     scope: string[];
@@ -26,6 +28,7 @@ export async function getTask(
     all?: boolean;
     subtaskFields?: string[];
     subjects?: string[];
+    rootStatistics?: boolean;
   }
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
@@ -39,7 +42,9 @@ export async function getTask(
   const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
   const statusQuery = typeof status !== 'undefined' ? sql`and t.status = ${status}` : sql``;
   const subjectsQuery =
-    typeof subjects !== 'undefined' && subjects.length ? sql`and t.subject = any (${sql.array(subjects, 'text')})` : sql``;
+    typeof subjects !== 'undefined' && subjects.length
+      ? sql`and t.subject = any (${sql.array(subjects, 'text')})`
+      : sql``;
 
   const fullTaskList = sql`
       select t.*
@@ -69,6 +74,21 @@ export async function getTask(
     `
   );
 
+  // Root statistics
+  const rootStats = rootStatistics
+    ? await connection.one<Exclude<FullSingleTask['root_statistics'], undefined>>(sql`
+    select 
+      sum((status = -1)::int) as error,
+      sum((status = 0)::int) as not_started,
+      sum((status = 1)::int) as accepted,
+      sum((status = 2 or status > 3)::int) as progress,
+      sum((status = 3)::int) as done
+    from tasks t
+    where t.context ?& ${sql.array(context, 'text')}
+    and t.root_task = ${id} 
+  `)
+    : undefined;
+
   const actualTask = taskList.find((t) => t.id === id);
   const subtasks = taskList.filter((t) => t.id !== id);
 
@@ -83,6 +103,8 @@ export async function getTask(
     total_results: rowCount,
     total_pages: Math.ceil(rowCount / perPage),
   };
+
+  task.root_statistics = rootStats;
 
   return task;
 }
