@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [v1.1.1](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.0...v1.1.1)
+
+### Added
+- Added `assignee_id` to `order_by` sorting options.
+
 ## [v1.1.0](https://github.com/digirati-co-uk/tasks-api/compare/v1.0.6...v1.1.0)
 
 ### Added

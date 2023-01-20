@@ -53,13 +53,6 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     context.query.sort_by = 'modified_at:asc';
   }
 
-  // Sort by subject
-  // Sort by title
-  // Sort by subject parent
-  // Sort by Created
-  // Sort by Status
-  // Sort by metadata field
-
   const sorts = parseSort(context.query.sort_by || '', [
     'subject',
     'subject_parent',
@@ -67,6 +60,7 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     'modified_at',
     'status',
     'title',
+    'assignee_id',
   ]);
 
   const orderBy = sorts.length
