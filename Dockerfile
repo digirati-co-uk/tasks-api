@@ -1,4 +1,4 @@
-FROM node:12 as build
+FROM node:lts-bullseye-slim as build
 
 WORKDIR /home/node/app
 
@@ -14,7 +14,7 @@ COPY ./migrate.js /home/node/app/migrate.js
 
 RUN yarn build-es
 
-FROM node:12 as deps
+FROM node:lts-bullseye-slim as deps
 
 WORKDIR /home/node/app
 
@@ -23,7 +23,7 @@ ADD ./yarn.lock /home/node/app/yarn.lock
 
 RUN LDFLAGS='-static-libgcc -static-libstdc++' yarn install --production --no-interactive --frozen-lockfile
 
-FROM node:12-alpine
+FROM node:lts-bullseye-slim
 
 LABEL org.opencontainers.image.source='https://github.com/digirati-co-uk/tasks-api'
 LABEL org.opencontainers.image.documentation='https://docs.madoc.io/'

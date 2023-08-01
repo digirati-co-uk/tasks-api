@@ -78,5 +78,28 @@ describe('Root statistics', function () {
       progress: 3,
       done: 4,
     });
+
+    // Test created statistics
+    const createdStatistics = await global.asAdmin.get(`/tasks/${rootId}/stats?root=true&group_by=creator`);
+    expect(createdStatistics.status).toEqual(200);
+    expect(createdStatistics.body).toMatchInlineSnapshot(`
+      Object {
+        "creator_id": Object {
+          "urn:madoc:user:123": 9,
+        },
+        "total": 9,
+      }
+    `);
+
+    const completeStats = await global.asAdmin.get(`/tasks/${rootId}/stats?root=true&group_by=creator&status=3`);
+    expect(completeStats.status).toEqual(200);
+    expect(completeStats.body).toMatchInlineSnapshot(`
+      Object {
+        "creator_id": Object {
+          "urn:madoc:user:123": 4,
+        },
+        "total": 4,
+      }
+    `);
   });
 });
