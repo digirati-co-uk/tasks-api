@@ -1,4 +1,5 @@
 import { ApplicationState, JWTConfig, Scopes } from '../types';
+import { safeJsonParse } from './safe-json-parse';
 
 export function parseToken(
   rawToken: string,
@@ -13,7 +14,11 @@ export function parseToken(
 
   try {
     const payload = Buffer.from(base64Payload, 'base64');
-    const token = JSON.parse(payload.toString('ascii'));
+    const tokenResp = safeJsonParse(payload.toString('utf-8'));
+    if (tokenResp.error) {
+      throw new Error(`Invalid token JSON encoding`);
+    }
+    const token = tokenResp.result;
 
     if (!token || !token.sub || !token.scope || !token.iss) {
       return;

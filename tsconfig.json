@@ -17,7 +17,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "downlevelIteration": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
       // "PACKAGE_NAME": ["../SERVICE_NAME"]
