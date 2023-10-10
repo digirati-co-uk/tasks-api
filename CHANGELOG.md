@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed ascii characters in tokens
+- Fixed Postgres connection timeout
 
 ## [v1.1.2](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.1...v1.1.2)
 
