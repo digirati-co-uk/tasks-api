@@ -30,6 +30,7 @@ module.exports = {
 
       // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
       instances: 1,
+      cron_restart: '0 3 * * *', // 3AM each day.
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',
