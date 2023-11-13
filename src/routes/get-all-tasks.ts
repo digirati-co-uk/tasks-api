@@ -81,6 +81,9 @@ export const getAllTasks: RouteMiddleware = async (context) => {
       ? sql``
       : sql`and t.parent_task is null`;
   const assigneeId = context.query.assignee;
+
+  const joinRequired = !(isAdmin || canCreate) && !assigneeId;
+
   const userExclusion =
     isAdmin || canCreate
       ? assigneeId
@@ -131,10 +134,12 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     ? sql`and t.created_at > (now() - ${context.query.created_date_interval}::interval)`
     : sql``;
 
+  const dtJoin = joinRequired ? sql`left join tasks dt on t.delegated_task = dt.id` : sql``;
+
   try {
     const countQuery = sql<{ total_items: number }>`
-        select COUNT(*) as total_items from tasks t
-        left join tasks dt on t.delegated_task = dt.id
+        select COUNT(*) as total_items from tasks t 
+        ${dtJoin}
         where t.context ?& ${sql.array(context.state.jwt.context, 'text')}
         ${subtaskExclusion}
         ${userExclusion}
@@ -153,8 +158,8 @@ export const getAllTasks: RouteMiddleware = async (context) => {
     `;
     const query = sql`
       SELECT t.id, t.name, t.status, t.status_text, t.metadata, t.type ${detailedFields}
-      FROM tasks t 
-      LEFT JOIN tasks dt on t.delegated_task = dt.id
+      FROM tasks t
+      ${dtJoin}
       WHERE t.context ?& ${sql.array(context.state.jwt.context, 'text')}
         ${subtaskExclusion}
         ${userExclusion}
