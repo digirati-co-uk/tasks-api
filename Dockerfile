@@ -21,7 +21,7 @@ WORKDIR /home/node/app
 ADD ./package.json /home/node/app/package.json
 ADD ./yarn.lock /home/node/app/yarn.lock
 
-RUN LDFLAGS='-static-libgcc -static-libstdc++' yarn install --production --no-interactive --frozen-lockfile
+RUN yarn install --production --no-interactive --frozen-lockfile
 
 FROM node:lts-bullseye-slim
 
@@ -56,4 +56,3 @@ COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
 
 CMD ["node_modules/.bin/pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
-
