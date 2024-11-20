@@ -26,15 +26,15 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async (ctx)
   const statusQuery = typeof status !== 'undefined' && !Number.isNaN(status) ? sql`and t.status = ${status}` : sql``;
 
   const results = await ctx.connection.any(sql`
-    select t.subject, t.status ${assigneeFields} from tasks t 
+    select t.subject, t.status ${assigneeFields} from tasks t
         ${parentJoin}
-        where  ${parentTask ? sql`t.parent_task = ${taskId}` : sql`t.root_task = ${taskId}`} 
+        where  ${parentTask ? sql`t.parent_task = ${taskId}` : sql`t.root_task = ${taskId}`}
         ${subjectQuery}
         ${typeQuery}
         ${parentQuery}
         ${assignedToQuery}
         ${statusQuery}
-        and t.context ?& ${sql.array(context, 'text')}
+        and t.context ?& ${sql.array(context, 'text')}::text[]
   `);
 
   ctx.response.body = {

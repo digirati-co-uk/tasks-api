@@ -23,10 +23,10 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async (context)
     type: string;
   }>(sql`
       SELECT t.assignee_id, t.creator_id, t.events, t.type, dt.assignee_id as delegated_assignee
-      FROM tasks t 
+      FROM tasks t
       left join tasks dt on t.delegated_task = dt.id
-      WHERE t.id = ${id} 
-        AND t.context ?& ${sql.array(context.state.jwt.context, 'text')}
+      WHERE t.id = ${id}
+        AND t.context ?& ${sql.array(context.state.jwt.context, 'text')}::text[]
     `);
 
   const taskWithId = { id, type, events };

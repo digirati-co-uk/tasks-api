@@ -10,7 +10,7 @@ export const exportTasks: RouteMiddleware = async (context) => {
   }
 
   const tasks = await context.connection.any(sql`
-    select * from tasks where context ?& ${sql.array(context.state.jwt.context, 'text')}
+    select * from tasks where context ?& ${sql.array(context.state.jwt.context, 'text')}::text[]
   `);
 
   context.response.body = { tasks };

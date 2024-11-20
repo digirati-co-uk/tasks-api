@@ -18,9 +18,9 @@ export const updateMetadata: RouteMiddleware<{ id: string }> = async (context) =
     metadata: any | null;
   }>(sql`
       SELECT t.id, t.metadata
-      FROM tasks t 
-      WHERE t.id = ${id} 
-        AND t.context ?& ${sql.array(context.state.jwt.context, 'text')}
+      FROM tasks t
+      WHERE t.id = ${id}
+        AND t.context ?& ${sql.array(context.state.jwt.context, 'text')}::text[]
     `);
 
   if (!currentTask) {
