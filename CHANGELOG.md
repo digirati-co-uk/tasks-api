@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.5...main)
+## [Unreleased](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.6...main)
 
 <!--
 ### Added
@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 -->
+
+## [v1.1.6](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.5...v1.1.6)
+
+### Added
+- Added index for tasks.type and GIN index for tasks.context
+- Added type casting for context text[] queries
+- Added test with larger data set (previously dnf)
+
+### Changed
+- Switch database pool from reserved connections
 
 ## [v1.1.5](https://github.com/digirati-co-uk/tasks-api/compare/v1.1.4...v1.1.5)
 
