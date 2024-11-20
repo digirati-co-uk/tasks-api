@@ -20,10 +20,10 @@ export const postEvent: RouteMiddleware<{ id: string; event: string }, { subject
     events?: string[];
     type: string;
   }>`
-      SELECT t.assignee_id, t.creator_id, t.events, t.type 
-      FROM tasks t 
-      WHERE id = ${id} 
-        AND context ?& ${sql.array(context.state.jwt.context, 'text')}
+      SELECT t.assignee_id, t.creator_id, t.events, t.type
+      FROM tasks t
+      WHERE id = ${id}
+        AND context ?& ${sql.array(context.state.jwt.context, 'text')}::text[]
     `);
 
   const taskWithId = { id, type, events };

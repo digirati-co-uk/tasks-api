@@ -27,6 +27,8 @@ function track(t: any) {
   createdTasks.push(t.body.id);
 }
 
+jest.setTimeout(30000);
+
 describe('Root statistics', function () {
   test('some statistics', async () => {
     const root = await global.asAdmin.post('/tasks', {
@@ -101,5 +103,34 @@ describe('Root statistics', function () {
         "total": 4,
       }
     `);
+  });
+
+  test('lots of statistics', async () => {
+    const root = await global.asAdmin.post('/tasks', {
+      ...baseTask,
+      subject: 'urn:madoc:manifest:1',
+    });
+    track(root);
+    const rootId: string = (root.body as any).id;
+
+    // 100,000x status=1
+    for (let i = 0; i < 1000; i++) {
+      await global.asAdmin.post('/tasks', {
+        ...baseTask,
+        subject: 'urn:madoc:manifest:1',
+        root_task: rootId,
+        parent_task: rootId,
+        status: 1,
+      });
+    }
+
+    const newList = await global.asAdmin.get(`/tasks/${rootId}?root_statistics=true`);
+    expect((newList.body as any).root_statistics).toEqual({
+      error: 0,
+      not_started: 0,
+      accepted: 1000,
+      progress: 0,
+      done: 0,
+    });
   });
 });

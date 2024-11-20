@@ -11,9 +11,12 @@ export const getStatistics: RouteMiddleware<{ id?: string }> = async (context) =
   const whereUser = context.query.user_id
     ? sql`(creator_id = ${context.query.user_id} or assignee_id = ${context.query.user_id})`
     : undefined;
-  const whereContext = sql`context ?& ${sql.array(context.state.jwt.context, 'text')}`;
+  const whereContext = sql`context ?& ${sql.array(context.state.jwt.context, 'text')}::text[]`;
   const counter = context.query.distinct_subjects ? sql`count(distinct subject)` : sql`count(*)`;
-  const fullWhere = sql.join([whereRoot, whereType, whereUser, whereContext, whereStatus].filter(Boolean) as any[], sql` and `);
+  const fullWhere = sql.join(
+    [whereRoot, whereType, whereUser, whereContext, whereStatus].filter(Boolean) as any[],
+    sql` and `
+  );
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
   const canCreate = context.state.jwt.scope.indexOf('tasks.create') !== -1;
   const groupBy = context.query.group_by;
@@ -51,7 +54,6 @@ export const getStatistics: RouteMiddleware<{ id?: string }> = async (context) =
   );
 
   if (returnField === 'status') {
-
     let total = 0;
     const statuses = query.reduce((state, next) => {
       state[next.status] = next.total;

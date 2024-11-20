@@ -1,7 +1,7 @@
 import { RouterParamContext } from '@koa/router';
 import * as Koa from 'koa';
 import { router } from './router';
-import { DatabasePoolConnectionType } from 'slonik';
+import { DatabasePoolType } from 'slonik';
 import { Ajv } from 'ajv';
 import { JobsOptions, ConnectionOptions, Queue, QueueOptions } from 'bullmq';
 import { EventPrefix } from './utility/events';
@@ -75,7 +75,7 @@ export interface ApplicationState {
 
 export interface ApplicationContext {
   routes: typeof router;
-  connection: DatabasePoolConnectionType;
+  connection: DatabasePoolType;
   getQueue?: (name: string) => Queue;
   ajv: Ajv;
 }

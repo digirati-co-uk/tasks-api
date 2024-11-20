@@ -50,7 +50,7 @@ export async function getTask(
       select t.*
       from tasks t
       left join tasks dt on t.delegated_task = dt.id
-      where t.context ?& ${sql.array(context, 'text')}
+      where t.context ?& ${sql.array(context, 'text')}::text[]
         ${userCheck}
         and (t.id = ${id} or (t.parent_task = ${id} ${statusQuery} ${subjectsQuery})) order by t.created_at
     `;
@@ -65,7 +65,7 @@ export async function getTask(
         from task_list
         where task_list.id = ${id}
         union
-        ( 
+        (
             select *
             from task_list
             where parent_task = ${id}
@@ -77,15 +77,15 @@ export async function getTask(
   // Root statistics
   const rootStats = rootStatistics
     ? await connection.one<Exclude<FullSingleTask['root_statistics'], undefined>>(sql`
-    select 
+    select
       sum((status = -1)::int) as error,
       sum((status = 0)::int) as not_started,
       sum((status = 1)::int) as accepted,
       sum((status = 2 or status > 3)::int) as progress,
       sum((status = 3)::int) as done
     from tasks t
-    where t.context ?& ${sql.array(context, 'text')}
-    and t.root_task = ${id} 
+    where t.context ?& ${sql.array(context, 'text')}::text[]
+    and t.root_task = ${id}
   `)
     : undefined;
 
